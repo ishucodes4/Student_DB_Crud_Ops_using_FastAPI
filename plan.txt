@@ -1,0 +1,35 @@
+Student Database Project by Teacher:(student entry platfrom)
+
+Python
+FastAPI
+Postgres
+Authentication
+SQLAlchemy
+notification using web sockets
+
+
+
+
+Design of the Projects:
+(1) Table Design:
+
+student_detail_table-(DONE)
+Schema:
+student_id(string),student_name(string),parent_name(string),subjects_listed(list[string]),date_of_birth(datetime)
+
+select * from students;-> Query
+
+
+(2) Authentication: teacher will be superuser(Will be able to do anything). student will be able to read only.
+
+(3) API Design:( Create Read Update Delete)
+
+
+
+c) Search by student_id/student_name (via indexing)
+
+e)update student via name/id (notification via websocket)(done)
+
+
+f) Postman
+g) GITHUB repo

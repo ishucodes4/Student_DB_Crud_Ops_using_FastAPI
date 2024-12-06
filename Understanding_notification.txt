@@ -1,0 +1,65 @@
+->WebSocket in FastAPI:
+FastAPI natively supports WebSockets, allowing you to create a WebSocket endpoint. Here's how it works:
+
+->How actually it Works in FastAPI:
+1)Client connects to the WebSocket endpoint (e.g., /ws).
+2)Server accepts the connection and keeps it alive.
+3)Server can send messages to the client at any time.
+
+
+->To build a notification system:
+
+1)WebSocket Endpoint: Clients connect here to start receiving notifications.
+2)Store Connections: Active WebSocket connections are stored (e.g., in a list).
+3)Broadcast Messages: Whenever an API performs an action, it notifies all connected WebSocket clients.
+
+
+
+Step 1: WebSocket Endpoint
+This is the WebSocket entry point for clients:
+
+Clients use /ws to connect.
+Connections are added to the active_connections list.
+The server maintains these connections until the client disconnects.
+python
+
+
+
+from fastapi import WebSocket, WebSocketDisconnect
+
+# List to store active WebSocket connections
+active_connections = []
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    # Accept WebSocket connection
+    await websocket.accept()
+    active_connections.append(websocket)
+    print(f"New connection: {websocket.client}")
+    
+    try:
+        # Keep the connection alive
+        while True:
+            await websocket.receive_text()  # Keeps connection open
+    except WebSocketDisconnect:
+        # Remove disconnected clients
+        active_connections.remove(websocket)
+        print(f"Disconnected: {websocket.client}")
+
+
+
+Step 2: Broadcast Notifications
+Whenever an API performs an operation (e.g., inserts a student record), it broadcasts a message to all active WebSocket clients.
+
+The notify_clients function sends a message to every WebSocket connection in the active_connections list:
+
+async def notify_clients(message: str):
+    for connection in active_connections:
+        try:
+            # Send the message to the client
+            await connection.send_text(message)
+        except Exception as e:
+            print(f"Error sending message to client: {e}")
+
+Step 3:
+await notify_clients(f"New student added: {student_data.student_name}"): Triggering Notification in API
